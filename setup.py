@@ -207,6 +207,7 @@ with open(library_name + '/__init__.py') as f:
 
   # renaming meta-data keys
   meta_renames = [
+    ('library', 'name'),
     ('website', 'url'),
     ('email', 'author_email'),
   ]
