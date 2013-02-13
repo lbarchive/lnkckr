@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # Copyright (C) 2013 by Yu-Jie Lin
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,49 +19,20 @@
 # THE SOFTWARE.
 
 
-from __future__ import print_function
-import argparse
-import json
-from os import path
-import sys
+from lxml import html
 
-from lnkckr.checkers import checkers
+from lnkckr.checkers.base import Checker as BaseChecker
 
 
-def main():
+class Checker(BaseChecker):
 
-  parser = argparse.ArgumentParser()
-  parser.add_argument('-c', '--checker')
-  parser.add_argument('-f', '--file')
-  parser.add_argument('-j', '--json')
-  parser.add_argument('-s', '--status',
-                      help=('re-check links with status. '
-                            'Valid values: all, HTTP status code'))
-  args = parser.parse_args()
+  ID = 'html'
 
-  for checker in checkers:
-    if args.checker and checker.ID == args.checker:
-      Checker = checker
-      break
-  else:
-    print('Cannot find checker to process', file=sys.stderr)
-    sys.exit(1)
+  def process(self, f):
+    """Process a HTML file"""
+    content = f.read()
 
-  if not args.file and not args.json:
-    print('No files to process', file=sys.stderr)
-    sys.exit(1)
-
-  checker = Checker(args.file, args.json)
-  links = checker.links
-
-  f = None
-  if args.status:
-    f = lambda item: item[1]['status'] == args.status
-  checker.check(f)
-  print()
-  checker.print_report()
-  checker.print_summary()
-
-
-if __name__ == '__main__':
-  main()
+    post = html.fromstring(content)
+    for e in post.xpath('//*[@href|@src]'):
+      link = e.attrib.get('href') or e.attrib.get('src')
+      self.add_link(link)

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # Copyright (C) 2013 by Yu-Jie Lin
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,49 +19,42 @@
 # THE SOFTWARE.
 
 
-from __future__ import print_function
-import argparse
-import json
-from os import path
-import sys
+try:
+  from StringIO import StringIO
+except ImportError:
+  from io import StringIO
 
-from lnkckr.checkers import checkers
-
-
-def main():
-
-  parser = argparse.ArgumentParser()
-  parser.add_argument('-c', '--checker')
-  parser.add_argument('-f', '--file')
-  parser.add_argument('-j', '--json')
-  parser.add_argument('-s', '--status',
-                      help=('re-check links with status. '
-                            'Valid values: all, HTTP status code'))
-  args = parser.parse_args()
-
-  for checker in checkers:
-    if args.checker and checker.ID == args.checker:
-      Checker = checker
-      break
-  else:
-    print('Cannot find checker to process', file=sys.stderr)
-    sys.exit(1)
-
-  if not args.file and not args.json:
-    print('No files to process', file=sys.stderr)
-    sys.exit(1)
-
-  checker = Checker(args.file, args.json)
-  links = checker.links
-
-  f = None
-  if args.status:
-    f = lambda item: item[1]['status'] == args.status
-  checker.check(f)
-  print()
-  checker.print_report()
-  checker.print_summary()
+from lnkckr.checkers.list import Checker
+from test_lnkckr_checkers_base import BaseCheckerTestCase, H
 
 
-if __name__ == '__main__':
-  main()
+class ListCheckerTestCase(BaseCheckerTestCase):
+
+  def setUp(self):
+
+    self.checker = Checker()
+    self.checker.do_update = lambda url, link: None
+
+  # =====
+
+  def test_load(self):
+
+    checker = self.checker
+
+    links = '\n'.join((H + '200', H + '403', H + '404'))
+    src = StringIO(links)
+    checker.load(src)
+    expect = {
+      H + '200': {'status': None},
+      H + '403': {'status': None},
+      H + '404': {'status': None},
+    }
+    self.assertEqual(checker.links, expect)
+
+    checker.check()
+    expect = {
+      H + '200': {'status': '200', 'redirection': None},
+      H + '403': {'status': '403', 'redirection': None},
+      H + '404': {'status': '404', 'redirection': None},
+    }
+    self.assertEqual(checker.links, expect)
