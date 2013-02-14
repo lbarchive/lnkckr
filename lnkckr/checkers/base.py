@@ -155,6 +155,73 @@ class Checker():
     d.update(data or {})
     self.links.update({url: d})
 
+  def copy_link(self, link):
+    """Return a link copy
+
+    >>> c = Checker()
+    >>> url = 'http://example.com'
+    >>> c.add_link(url)
+    >>> link = c.links[url]
+    >>> copied_link = c.copy_link(link)
+    >>> link is not copied_link
+    True
+    """
+    return link.copy()
+
+  def copy_links(self, links=None):
+    """Return a links copy
+
+    Copy self.link if links is None
+
+    >>> c = Checker()
+    >>> url = 'http://example.com/'
+    >>> c.add_link(url + '1')
+    >>> c.add_link(url + '2')
+    >>> c.copy_links() == {url + '1': {'status': None},
+    ...                    url + '2': {'status': None}}
+    True
+    """
+    links = self.links if links is None else links
+    return dict((url, self.copy_link(link)) for url, link in links.items())
+
+  def update_links(self, links, update_status=False):
+    """Update self.links with links"""
+    urls = set(self.links.keys())
+    nurls = set(links.keys())
+
+    # remove removed links
+    for url in urls - nurls:
+      del self.links[url]
+    # add new links
+    for url in nurls - urls:
+      self.links[url] = links[url]
+    # update links
+    for url in urls & nurls:
+      self.update_link(url, links[url], update_status)
+
+  def update_link(self, url, new_link, update_status=False):
+    """Update self.links[url] with new_link
+
+    >>> c = Checker()
+    >>> url = 'http://example.com/'
+    >>> c.add_link(url)
+    >>> new_link = {'status': 123, 'foobar': 'blah'}
+    >>> c.update_link(url, new_link)
+    >>> c.links[url]
+    {'status': None, 'foobar': 'blah'}
+    >>> new_link['foobar'] = 'duh'
+    >>> c.update_link(url, new_link, update_status=True)
+    >>> c.links[url]
+    {'status': 123, 'foobar': 'duh'}
+    """
+    link = self.copy_link(self.links[url])
+    link.update(new_link)
+    if not update_status:
+      link['status'] = self.links[url]['status']
+    self.links[url] = link
+
+  # =====
+
   def check_url(self, url):
     """Check a url
 

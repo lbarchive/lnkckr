@@ -33,6 +33,7 @@ def main():
 
   parser = argparse.ArgumentParser()
   parser.add_argument('-c', '--checker')
+  parser.add_argument('-u', '--update', action='store_true', help='update JSON')
   parser.add_argument('-f', '--file')
   parser.add_argument('-j', '--json')
   parser.add_argument('-s', '--status',
@@ -54,6 +55,16 @@ def main():
 
   checker = Checker(args.file, args.json)
   links = checker.links
+  if args.update:
+    if not args.file:
+      print('No file to update JSON', file=sys.stderr)
+      sys.exit(1)
+    old_links = checker.copy_links()
+    checker.load(args.file)
+    new_links = checker.links
+    checker.links = old_links
+    checker.update_links(new_links)
+    print('Links updated')
 
   f = None
   if args.status:

@@ -137,6 +137,27 @@ class BaseCheckerTestCase(unittest.TestCase):
 
   # =====
 
+  def test_update_links(self):
+
+    checker = self.checker
+    checker.add_link('http://example.com', {'data': 'foobar'})
+    checker.update_links({})
+    self.assertEqual(checker.links, {})
+
+    new_links = {'http://example.com/': {'status': None, 'data': 'blah'}}
+    checker.update_links(new_links)
+    self.assertEqual(checker.links, new_links)
+
+    new_links = {'http://example.com/': {'status': 123, 'data': 'duh'}}
+    expect = {'http://example.com/': {'status': None, 'data': 'duh'}}
+    checker.update_links(new_links)
+    self.assertEqual(checker.links, expect)
+
+    checker.update_links(new_links, update_status=True)
+    self.assertEqual(checker.links, new_links)
+
+  # =====
+
   def test_check(self):
 
     checker = self.checker
