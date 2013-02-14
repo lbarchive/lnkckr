@@ -19,6 +19,7 @@
 # THE SOFTWARE.
 
 
+from __future__ import print_function
 try:
   from io import StringIO
 except:
