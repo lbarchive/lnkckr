@@ -27,6 +27,7 @@ except ImportError:
 from itertools import groupby
 import json
 from multiprocessing import Process, Queue, Value
+from os import path
 try:
   from queue import Empty
 except ImportError:
@@ -57,29 +58,27 @@ class Checker():
   # result in 403.
   HEADERS = {'User-Agent': '%s/%s' % (lnkckr.__name__, lnkckr.__version__)}
 
-  def __init__(self, src=None, jsonsrc=None):
+  def __init__(self):
 
     self.links = {}
     self.json_filename = None
-    self.load(src, jsonsrc)
 
-  def load(self, src=None, jsonsrc=None):
+  def load(self, src=None, jsonsrc=None, do_update=False, update_status=False):
     """Load links from a file
 
     src can be a URL (starting with http), file-like object, or a filename.
+    jsonsrc can be a file-like or a filename.
 
-    jsonsrc can be a file-like or a filename. jsonsrc is saved at
-    self.json_filename for save function if it's a filename and can be loaded
-    successfully.
+    "src.json" may be saved if src is a file and jsonsrc isn't a file.
 
-    jsonsrc processes first, it updates self.links and returns if something
-    comes from jsonsrc. If not then process with src.
+    do_update will update the JSON.
 
     The file format depends how self.process() is implemented."""
     if jsonsrc:
       self.json_filename = self.load_json(jsonsrc)
-      if self.json_filename:
+      if not do_update:
         return
+      json_links = self.links
 
     if not src:
       return
@@ -92,12 +91,22 @@ class Checker():
       elif hasattr(src, 'read'):
         f = src
       else:
+        if not self.json_filename:
+          self.json_filename = src + '.json'
+          if not do_update and path.exists(self.json_filename):
+            self.load_json(self.json_filename)
+            return
         f = open(src, 'r')
 
       self.process(f)
     finally:
       if f:
         f.close()
+
+    if jsonsrc and do_update:
+      file_links = self.links
+      self.links = json_links
+      self.update_links(file_links, update_status)
 
   def process(self, data):
     """Process the data from load()"""
@@ -149,35 +158,6 @@ class Checker():
     d.update(data or {})
     self.links.update({url: d})
 
-  def copy_link(self, link):
-    """Return a link copy
-
-    >>> c = Checker()
-    >>> url = 'http://example.com'
-    >>> c.add_link(url)
-    >>> link = c.links[url]
-    >>> copied_link = c.copy_link(link)
-    >>> link is not copied_link
-    True
-    """
-    return link.copy()
-
-  def copy_links(self, links=None):
-    """Return a links copy
-
-    Copy self.link if links is None
-
-    >>> c = Checker()
-    >>> url = 'http://example.com/'
-    >>> c.add_link(url + '1')
-    >>> c.add_link(url + '2')
-    >>> c.copy_links() == {url + '1': {'status': None},
-    ...                    url + '2': {'status': None}}
-    True
-    """
-    links = self.links if links is None else links
-    return dict((url, self.copy_link(link)) for url, link in links.items())
-
   def update_links(self, links, update_status=False):
     """Update self.links with links"""
     urls = set(self.links.keys())
@@ -208,11 +188,11 @@ class Checker():
     >>> c.links[url]
     {'status': 123, 'foobar': 'duh'}
     """
-    link = self.copy_link(self.links[url])
+    link = self.links[url]
+    status = link['status']
     link.update(new_link)
     if not update_status:
-      link['status'] = self.links[url]['status']
-    self.links[url] = link
+      link['status'] = status
 
   # =====
 
