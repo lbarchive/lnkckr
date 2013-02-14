@@ -27,7 +27,6 @@ except ImportError:
 from itertools import groupby
 import json
 from multiprocessing import Process, Queue, Value
-from os import path
 try:
   from queue import Empty
 except ImportError:
@@ -74,8 +73,7 @@ class Checker():
     successfully.
 
     jsonsrc processes first, it updates self.links and returns if something
-    comes from jsonsrc. If not then process with src, then if src + '.json'
-    exists, then load() will be called by itself with that filename.
+    comes from jsonsrc. If not then process with src.
 
     The file format depends how self.process() is implemented."""
     if jsonsrc:
@@ -94,10 +92,6 @@ class Checker():
       elif hasattr(src, 'read'):
         f = src
       else:
-        self.json_filename = src + '.json'
-        if path.exists(self.json_filename):
-          self.load(None, src + '.json')
-          return
         f = open(src, 'r')
 
       self.process(f)

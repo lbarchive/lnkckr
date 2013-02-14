@@ -54,6 +54,8 @@ def main():
     sys.exit(1)
 
   checker = Checker(args.file, args.json)
+  if not args.json and path.exists(args.file):
+    checker.json_filename = args.file + '.json'
   links = checker.links
   if args.update:
     if not args.file:
