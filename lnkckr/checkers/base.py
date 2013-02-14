@@ -234,7 +234,7 @@ class Checker():
     except KeyboardInterrupt:
       pass
 
-  def update_links(self, r):
+  def check_update_links(self, r):
 
     while not r.empty():
       url, data = r.get(block=False)
@@ -267,17 +267,17 @@ class Checker():
         f = lambda item: item[1]['status'] is None
       for idx, item in enumerate(filter(f, self.links.items()), start=1):
         q.put(item[0])
-        self.update_links(r)
+        self.check_update_links(r)
         if idx % self.SAVE_INT == 0:
           self.do_save()
-      self.update_links(r)
+      self.check_update_links(r)
     except KeyboardInterrupt:
       pass
 
     running.value = 0
     for worker in workers:
       worker.join()
-    self.update_links(r)
+    self.check_update_links(r)
     self.do_save()
     socket.setdefaulttimeout(default_timeout)
 
