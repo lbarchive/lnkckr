@@ -320,10 +320,15 @@ class Checker():
     print()
 
     links = self.links
-    for url, link in links.items():
-      self.print_report_link(url, link)
 
-    unchecked = sum(1 for link in links.values() if link['status'] is None)
+    unchecked = 0
+    key = lambda item: item[1]['status'] or '---'
+    for status, g in groupby(sorted(links.items(), key=key), key=key):
+      if status == '---':
+        unchecked = len(g)
+        continue
+      for url, link in sorted(g):
+        self.print_report_link(url, link)
     if unchecked:
       print('*** checking process is not finished, '
             '%d links have not been checked. ***' % unchecked)
