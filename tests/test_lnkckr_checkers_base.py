@@ -46,6 +46,8 @@ class Handler(BaseHTTPRequestHandler):
 
   def do_GET(self):
 
+    # counting the requests
+    self.server.requests.value += 1
     redir = H
     m = self.RE_CODE.match(self.path)
     if m:
@@ -79,9 +81,11 @@ class Handler(BaseHTTPRequestHandler):
     pass
 
 
-def run_httpd(running):
+def run_httpd(running, requests):
 
   httpd = HTTPServer((HOST, PORT), Handler)
+  httpd.requests = requests
+  httpd.requests.value = 0
   httpd.timeout = 0.01
   while running.value:
     httpd.handle_request()
@@ -93,7 +97,9 @@ class BaseCheckerTestCase(unittest.TestCase):
   def setUpClass(self):
 
     self.httpd_running = Value('b', 1)
-    self.httpd_process = Process(target=run_httpd, args=(self.httpd_running,))
+    self.httpd_requests = Value('L', 1)
+    args = (self.httpd_running, self.httpd_requests)
+    self.httpd_process = Process(target=run_httpd, args=args)
     self.httpd_process.start()
 
   @classmethod
@@ -209,3 +215,22 @@ class BaseCheckerTestCase(unittest.TestCase):
     checker.check()
     expect = {H + '200#foobar': {'status': '###', 'redirection': None}}
     self.assertEqual(checker.links, expect)
+
+  def test_check_fragments(self):
+    """Test same url with different fragments and only make HTTP request
+    once.
+    """
+    checker = self.checker
+
+    req_count = self.httpd_requests.value
+    checker.add_link(H + '200#foobar')
+    checker.add_link(H + '200#foobar1')
+    checker.HEADERS['X-Echo'] = '<h1 id="foobar">blah</h1>'
+    checker.check()
+
+    expect = {
+      H + '200#foobar': {'status': '200', 'redirection': None},
+      H + '200#foobar1': {'status': '###', 'redirection': None},
+    }
+    self.assertEqual(checker.links, expect)
+    self.assertEqual(self.httpd_requests.value, req_count + 1)

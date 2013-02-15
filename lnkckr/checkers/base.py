@@ -35,9 +35,9 @@ except ImportError:
 import socket
 import traceback
 try:
-  from urllib.parse import urljoin, urlparse
+  from urllib.parse import urldefrag, urljoin, urlparse
 except ImportError:
-  from urlparse import urljoin, urlparse
+  from urlparse import urldefrag, urljoin, urlparse
 try:
   from urllib.request import urlopen
 except ImportError:
@@ -196,10 +196,10 @@ class Checker():
 
   # =====
 
-  def check_url(self, url):
+  def check_url(self, url, frags=None):
     """Check a url
 
-    Returns (final status code in string, final redirection url)
+    Returns (final status code(s) in list of string, final redirect url)
 
     >>> c = Checker()
     >>> c.check_url('http://example.com') # doctest: +SKIP
@@ -210,6 +210,7 @@ class Checker():
     method = 'HEAD'
     start_url = url
     status = ''
+    statuses = []
 
     while not status:
       if url.startswith('//'):
@@ -229,18 +230,20 @@ class Checker():
         p = url_comp.path
         if url_comp.query:
           p += '?' + url_comp.query
-        if url_comp.fragment:
+        if frags:
           method = 'GET'
         conn.request(method, p, headers=self.HEADERS)
         resp = conn.getresponse()
-        if resp.status == 200 and url_comp.fragment:
+        if resp.status == 200 and frags:
           rbody = resp.read().decode('utf8')
-          if 'id="%s"' % url_comp.fragment in rbody:
-            status = '200'
-          elif "id='%s'" % url_comp.fragment in rbody:
-            status = '200'
-          else:
-            status = '###'
+          for frag in frags:
+            if 'id="%s"' % frag in rbody:
+              status = '200'
+            elif "id='%s'" % frag in rbody:
+              status = '200'
+            else:
+              status = '###'
+            statuses.append(status)
         elif 300 <= resp.status < 400:
           if redirs >= MAX_REDIRS:
             status = 'RRR'
@@ -261,6 +264,10 @@ class Checker():
 
     if start_url == url and not redirs:
       url = None
+    if frags:
+      if not statuses:
+        statuses = [status]*len(frags)
+      return statuses, url
     return status, url
 
   def check_worker(self, q, r, running):
@@ -268,7 +275,12 @@ class Checker():
     try:
       while not q.empty() or running.value:
         try:
-          url = q.get(timeout=0.01)
+          url, frags = q.get(timeout=0.01)
+          if frags:
+            statuses, rurl = self.check_url(url, frags)
+            for frag, status in zip(frags, statuses):
+              r.put((url + '#' + frag, (status, rurl)))
+            continue
           r.put((url, self.check_url(url)))
         except Empty:
           pass
@@ -284,6 +296,28 @@ class Checker():
       link['status'] = status
       link['redirection'] = final_url
       self.do_update(url, link)
+
+  def _check_groupby(self, urls):
+    """Generator to group by parts of url without the fragment
+
+    The fragments will collected as a tuple.
+
+    >>> c = Checker()
+    >>> urls = ['http://example.com']
+    >>> list(c._check_groupby(urls))
+    [('http://example.com', ())]
+    >>> urls = [
+    ...   'http://example.com',
+    ...   'http://example.com/foo#bar1',
+    ...   'http://example.com/foo#bar2',
+    ... ]
+    >>> list(c._check_groupby(urls)) # doctest: +NORMALIZE_WHITESPACE
+    [('http://example.com', ()),
+     ('http://example.com/foo', ('bar1', 'bar2'))]
+    """
+    key = lambda item: item[0]
+    for url, g in groupby(sorted(map(urldefrag, urls), key=key), key):
+      yield url, tuple(filter(None, (item[1] for item in g)))
 
   def check(self, f=None):
     """Check links
@@ -306,8 +340,10 @@ class Checker():
     try:
       if f is None:
         f = lambda item: item[1]['status'] is None
-      for idx, item in enumerate(filter(f, self.links.items()), start=1):
-        q.put(item[0])
+      urls = (item[0] for item in filter(f, self.links.items()))
+      gurls = self._check_groupby(urls)
+      for idx, item in enumerate(gurls, start=1):
+        q.put(item)
         self.check_update_links(r)
         if idx % self.SAVE_INT == 0:
           self.do_save()
