@@ -29,9 +29,9 @@ import json
 from multiprocessing import Process, Queue, Value
 from os import path
 try:
-  from queue import Empty
+  from queue import Empty, Full
 except ImportError:
-  from Queue import Empty
+  from Queue import Empty, Full
 import socket
 import traceback
 try:
@@ -279,7 +279,13 @@ class Checker():
           if frags:
             statuses, rurl = self.check_url(url, frags)
             for frag, status in zip(frags, statuses):
-              r.put((url + '#' + frag, (status, rurl)))
+              data = (url + '#' + frag, (status, rurl))
+              while data:
+                try:
+                  r.put(data, False, 0.01)
+                  data = None
+                except Full:
+                  pass
             continue
           r.put((url, self.check_url(url)))
         except Empty:
@@ -350,7 +356,12 @@ class Checker():
       gurls = self._check_groupby(urls)
       for idx, item in enumerate(gurls, start=1):
         total += 1 if not item[1] else len(item[1])
-        q.put(item)
+        while item:
+          try:
+            q.put(item, False, 0.01)
+            item = None
+          except Full:
+            count += 1 if self.check_update_links(r) else 0
         count += 1 if self.check_update_links(r) else 0
         if count % self.SAVE_INT == 0:
           self.do_save()
