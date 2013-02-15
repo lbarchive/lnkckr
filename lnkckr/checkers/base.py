@@ -24,9 +24,9 @@ try:
   from http.client import HTTPConnection, HTTPSConnection
 except ImportError:
   from httplib import HTTPConnection, HTTPSConnection
-from itertools import groupby
+from itertools import groupby, product
 import json
-from multiprocessing import Process, Queue, Value
+from multiprocessing import Manager, Process, Queue, Value
 from os import path
 try:
   from queue import Empty, Full
@@ -210,7 +210,16 @@ class Checker():
 
   # =====
 
-  def check_url(self, url, frags=None):
+  def _check_url_frag(self, data):
+
+    frag, body = data
+    if 'id="%s"' % frag in body:
+      return '200'
+    elif "id='%s'" % frag in body:
+      return '200'
+    return '###'
+
+  def check_url(self, url, frags=None, local_html=None):
     """Check a url
 
     Returns (final status code(s) in list of string, final redirect url)
@@ -235,6 +244,10 @@ class Checker():
       elif url_comp.scheme == 'https':
         conn = HTTPSConnection(url_comp.netloc)
       else:
+        if not url and frags and local_html:
+          pairs = product(frags, (local_html,))
+          statuses = tuple(map(self._check_url_frag, pairs))
+          break
         status = 'SCH'
         if url_comp.scheme in ('about', 'javascript'):
           status = 'SKP'
@@ -250,14 +263,9 @@ class Checker():
         resp = conn.getresponse()
         if resp.status == 200 and frags:
           rbody = resp.read().decode('utf8')
-          for frag in frags:
-            if 'id="%s"' % frag in rbody:
-              status = '200'
-            elif "id='%s'" % frag in rbody:
-              status = '200'
-            else:
-              status = '###'
-            statuses.append(status)
+          pairs = product(frags, (rbody,))
+          statuses = tuple(map(self._check_url_frag, pairs))
+          break
         elif 300 <= resp.status < 400:
           if redirs >= MAX_REDIRS:
             status = 'RRR'
@@ -284,14 +292,15 @@ class Checker():
       return statuses, url
     return status, url
 
-  def check_worker(self, q, r, running):
+  def check_worker(self, q, r, running, data):
 
+    local_html = data.get('local_html', '')
     try:
       while not q.empty() or running.value:
         try:
           url, frags = q.get(timeout=0.01)
           if frags:
-            statuses, rurl = self.check_url(url, frags)
+            statuses, rurl = self.check_url(url, frags, local_html=local_html)
             for frag, status in zip(frags, statuses):
               data = (url + '#' + frag, (status, rurl))
               while data:
@@ -301,7 +310,7 @@ class Checker():
                 except Full:
                   pass
             continue
-          r.put((url, self.check_url(url)))
+          r.put((url, self.check_url(url, local_html=local_html)))
         except Empty:
           pass
     except KeyboardInterrupt:
@@ -354,10 +363,12 @@ class Checker():
     r = Queue(self.QUEUE_SIZE)
     running = Value('b', 1)
     workers = []
+    manager = Manager()
+    datadict = manager.dict(self.data)
     for i in range(self.MAX_WORKERS):
       worker = Process(name='checker #%d' % i,
                        target=self.check_worker,
-                       args=(q, r, running))
+                       args=(q, r, running, datadict))
       worker.start()
       workers.append(worker)
 

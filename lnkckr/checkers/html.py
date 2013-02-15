@@ -31,6 +31,7 @@ class Checker(BaseChecker):
   def process(self, f):
     """Process a HTML file"""
     content = f.read()
+    self.data['local_html'] = content
 
     post = html.fromstring(content)
     for e in post.xpath('//*[@href|@src]'):

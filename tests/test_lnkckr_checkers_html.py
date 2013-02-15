@@ -59,3 +59,20 @@ class HTMLCheckerTestCase(BaseCheckerTestCase):
       H + '404': {'status': '404', 'redirection': None},
     }
     self.assertEqual(checker.links, expect)
+
+  # =====
+
+  def test_local_html(self):
+
+    checker = self.checker
+
+    html = '<a href="#foo1">blah</a><span id="foo1">blah</span>'
+    html += '<a href="#foo2">blah</a>'
+    checker.process(StringIO(html))
+
+    checker.check()
+    expect = {
+      '#foo1': {'status': '200', 'redirection': None},
+      '#foo2': {'status': '###', 'redirection': None},
+    }
+    self.assertEqual(checker.links, expect)

@@ -3,6 +3,8 @@ CHANGES
 
 ## Development
 
+ * [base] add `local_html` for checking local fragment
+ * [html] use `local_html` to check local fragment
 
 ## Version 0.1.1 (2013-02-15T12:07:09Z)
 
