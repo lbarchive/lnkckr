@@ -127,19 +127,29 @@ class BaseCheckerTestCase(unittest.TestCase):
 
     checker = self.checker
 
+    data = {'foo': 'bar'}
     links = {'http://example.com': {'status': None, 'data': 'foobar'}}
-    src = StringIO(json.dumps(links))
-    checker.load_json(src)
+    jsondata = {'data': data, 'links': links}
+
+    checker.load_json(StringIO(json.dumps(jsondata)))
+
+    self.assertEqual(checker.data, data)
     self.assertEqual(checker.links, links)
 
   def test_save_json(self):
 
     checker = self.checker
-    links = {'http://example.com': {'status': None, 'data': 'foobar'}}
-    checker.add_link('http://example.com', {'data': 'foobar'})
     dest = StringIO()
+
+    data = {'foo': 'bar'}
+    links = {'http://example.com': {'status': None, 'data': 'foobar'}}
+    jsondata = {'data': data, 'links': links}
+
+    checker.data = data.copy()
+    checker.add_link('http://example.com', {'data': 'foobar'})
     checker.save_json(dest)
-    self.assertEqual(dest.getvalue(), json.dumps(links))
+
+    self.assertEqual(dest.getvalue(), json.dumps(jsondata))
 
   # =====
 

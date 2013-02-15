@@ -60,6 +60,7 @@ class Checker():
 
   def __init__(self):
 
+    self.data = {}
     self.links = {}
     self.json_filename = None
 
@@ -113,33 +114,43 @@ class Checker():
     pass
 
   def load_json(self, src):
-    """Load links from a JSON file
+    """Load data and links from a JSON file
 
     src can be a filename or file-like object.
 
     returns src only if it's file and load successfully.
     """
+    filename = None
     if hasattr(src, 'read'):
-      self.links = json.load(src)
+      jsondata = json.load(src)
       src.close()
-      return
+    else:
+      with open(src, 'r') as f:
+        jsondata = json.load(f)
+        filename = src
 
-    with open(src, 'r') as f:
-      self.links = json.load(f)
-      return src
+    # version <= 0.1.1
+    if 'data' not in jsondata or 'links' not in jsondata:
+      self.links = jsondata
+    else:
+      self.data = jsondata['data']
+      self.links = jsondata['links']
+
+    return filename
 
   def save_json(self, dest):
-    """Save links to a JSON file
+    """Save data and links to a JSON file
 
     dest can be a filename or a file-like object, will not be closed by
     save_json if it's a file-like object.
     """
+    jsondata = {'data': self.data, 'links': self.links}
     if hasattr(dest, 'write'):
-      json.dump(self.links, dest)
+      json.dump(jsondata, dest)
       return
 
     with open(dest, 'w') as f:
-      json.dump(self.links, f)
+      json.dump(jsondata, f)
 
   def add_link(self, url, data=None):
     """Add a link
