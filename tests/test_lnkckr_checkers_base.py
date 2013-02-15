@@ -196,6 +196,8 @@ class BaseCheckerTestCase(unittest.TestCase):
     expect = {H + 'loop': {'status': 'RRR', 'redirection': H + 'loop'}}
     self.assertEqual(checker.links, expect)
 
+  # -----
+
   def test_check_fragment(self):
 
     checker = self.checker
@@ -234,3 +236,19 @@ class BaseCheckerTestCase(unittest.TestCase):
     }
     self.assertEqual(checker.links, expect)
     self.assertEqual(self.httpd_requests.value, req_count + 1)
+
+  def test_local_fragments(self):
+    """Test local fragments and if make no HTTP requests"""
+    checker = self.checker
+
+    req_count = self.httpd_requests.value
+    checker.add_link('#foo1')
+    checker.add_link('#foo2')
+    checker.check()
+
+    expect = {
+      '#foo1': {'status': 'SCH', 'redirection': None},
+      '#foo2': {'status': 'SCH', 'redirection': None},
+    }
+    self.assertEqual(checker.links, expect)
+    self.assertEqual(self.httpd_requests.value, req_count)

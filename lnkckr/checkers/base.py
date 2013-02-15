@@ -314,6 +314,9 @@ class Checker():
     >>> list(c._check_groupby(urls)) # doctest: +NORMALIZE_WHITESPACE
     [('http://example.com', ()),
      ('http://example.com/foo', ('bar1', 'bar2'))]
+    >>> urls = ['#foo1', '#foo2']
+    >>> list(c._check_groupby(urls))
+    [('', ('foo1', 'foo2'))]
     """
     key = lambda item: item[0]
     for url, g in groupby(sorted(map(urldefrag, urls), key=key), key):
