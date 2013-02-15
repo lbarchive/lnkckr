@@ -68,3 +68,19 @@ class BloggerCheckerTestCase(BaseCheckerTestCase):
       }
     }
     self.assertEqual(checker.links, expect)
+
+  def test_process_local_blank_fragment(self):
+
+    checker = self.checker
+
+    content = '&lt;a href=&quot;#&quot;&gt;foobar&lt;/a&gt;'
+    url = H + '2013/01/test.html'
+    xml = XML1 % (content, url)
+    checker.process(StringIO(xml))
+    self.assertEqual(checker.links, {})
+
+    url = H + '2013/01/test.html'
+    content = '&lt;a href=&quot;%s&quot;&gt;foobar&lt;/a&gt;' % (url + '#')
+    xml = XML1 % (content, url)
+    checker.process(StringIO(xml))
+    self.assertEqual(checker.links, {})

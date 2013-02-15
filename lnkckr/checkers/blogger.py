@@ -66,6 +66,9 @@ class Checker(BaseChecker):
       htmlckr.links = {}
       htmlckr.process(StringIO(content_text))
       for link in htmlckr.links.keys():
+        # is a blank fragment?
+        if link == '#' or link == post_link + '#':
+          continue
         # is a local fragment?
         if link.startswith('#'):
           link = post_link + link

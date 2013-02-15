@@ -143,6 +143,15 @@ class BaseCheckerTestCase(unittest.TestCase):
 
   # =====
 
+  def test_add_link_local_blank_fragment(self):
+
+    checker = self.checker
+
+    checker.add_link('#')
+    self.assertEqual(checker.links, {})
+
+  # =====
+
   def test_update_links(self):
 
     checker = self.checker
@@ -237,7 +246,7 @@ class BaseCheckerTestCase(unittest.TestCase):
     self.assertEqual(checker.links, expect)
     self.assertEqual(self.httpd_requests.value, req_count + 1)
 
-  def test_local_fragments(self):
+  def test_check_local_fragments(self):
     """Test local fragments and if make no HTTP requests"""
     checker = self.checker
 

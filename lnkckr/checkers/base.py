@@ -154,6 +154,9 @@ class Checker():
     >>> c.links
     {'http://example.com': {'status': None, 'data': 'foobar'}}
     """
+    # skip blank fragment
+    if url == '#':
+      return
     d = {'status': None}
     d.update(data or {})
     self.links.update({url: d})
