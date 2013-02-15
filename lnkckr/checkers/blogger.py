@@ -36,7 +36,10 @@ class Checker(BaseChecker):
   ID = 'blogger'
 
   def process(self, f):
-    """Process a Blogger XML Export file"""
+    """Process a Blogger XML Export file
+
+    f is a file-like object.
+    """
     SCHEME_KIND = "http://schemas.google.com/g/2005#kind"
     VALID_KINDS = ("http://schemas.google.com/blogger/2008/kind#post",
                    "http://schemas.google.com/blogger/2008/kind#page")
@@ -63,6 +66,9 @@ class Checker(BaseChecker):
       htmlckr.links = {}
       htmlckr.process(StringIO(content_text))
       for link in htmlckr.links.keys():
+        # is a local fragment?
+        if link.startswith('#'):
+          link = post_link + link
         if link not in links:
           links[link] = {'status': None, 'posts': []}
         if post_link not in links[link]['posts']:
