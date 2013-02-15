@@ -412,7 +412,7 @@ class Checker():
     key = lambda item: item[1]['status'] or '---'
     for status, g in groupby(sorted(links.items(), key=key), key=key):
       if status == '---':
-        unchecked = len(g)
+        unchecked = len(list(g))
         continue
       for url, link in sorted(g):
         self.print_report_link(url, link)
