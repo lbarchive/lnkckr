@@ -296,6 +296,7 @@ class Checker():
       link['status'] = status
       link['redirection'] = final_url
       self.do_update(url, link)
+      return True
 
   def _check_groupby(self, urls):
     """Generator to group by parts of url without the fragment
@@ -330,7 +331,7 @@ class Checker():
     """
     default_timeout = socket.getdefaulttimeout()
     q = Queue(self.QUEUE_SIZE)
-    r = Queue(self.QUEUE_SIZE*2)
+    r = Queue(self.QUEUE_SIZE)
     running = Value('b', 1)
     workers = []
     for i in range(self.MAX_WORKERS):
@@ -340,17 +341,23 @@ class Checker():
       worker.start()
       workers.append(worker)
 
+    total = 0
+    count = 0
     try:
       if f is None:
         f = lambda item: item[1]['status'] is None
       urls = (item[0] for item in filter(f, self.links.items()))
       gurls = self._check_groupby(urls)
       for idx, item in enumerate(gurls, start=1):
+        total += 1 if not item[1] else len(item[1])
         q.put(item)
-        self.check_update_links(r)
-        if idx % self.SAVE_INT == 0:
+        count += 1 if self.check_update_links(r) else 0
+        if count % self.SAVE_INT == 0:
           self.do_save()
-      self.check_update_links(r)
+      while count < total:
+        count += 1 if self.check_update_links(r) else 0
+        if count % self.SAVE_INT == 0:
+          self.do_save()
     except KeyboardInterrupt:
       pass
 
