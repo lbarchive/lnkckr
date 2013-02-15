@@ -13,9 +13,10 @@ Installation
 Usage
 -----
 
-    linkcheck [-c CHECKER] [-f FILE] [-j JSON] [-s STATUS]
+    linkcheck [-c CHECKER] [-u|--update] [-f FILE] [-j JSON] [-s STATUS]
 
 * `CHECKER` is what checker used to process `FILE`.
+* `-u` or `--update` instructs lnkckr to update the JSON with input file. Normally, when `-j JSON` presents, lnkckr ignore the input file.
 * `FILE` is the input filename or URL.
 * `JSON` is the filename of saved progress file. If the `FILE` is a filename, then `FILE` can be omitted, an filename is assigned automatically unless using different filename is desired.
 * `STATUS` indicates re-check url with specific status.
@@ -35,12 +36,12 @@ Results
 -------
 
 * `[---]`: the url hasn't been checked.
-* `[xxx]`: where the xxx is the HTTP status code.
+* `[???]`: where the `???` is the HTTP status code.
 * `[###]`: means the fragment in the URL can't be found in the response body in format of `id="<fragment>"`.
 * `[SCH]`: unsupported HTTP scheme.
 * `[SKP]`: the url is skipped.
 * `[RRR]`: the url results reaching maximal redirection limit.
-* `[UKN]`: unknown error.
+* `[XXX]`: unknown error.
 * `[000]`: timeout when trying to check the url.
 
 Note
