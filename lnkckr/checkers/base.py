@@ -220,6 +220,8 @@ class Checker():
 
     >>> c = Checker()
     >>> f = c._check_url_frag
+    >>> f(('', 'blah'))
+    '200'
     >>> f(('foo', 'id="foo"'))
     '200'
     >>> f(('foo', 'id="nofoo"'))
@@ -228,6 +230,8 @@ class Checker():
     '200'
     """
     frag, body = data
+    if frag == '':
+      return '200'
     for m in self.RE_ID_NAME.finditer(body):
       if frag == m.group(2):
         return '200'
@@ -316,7 +320,7 @@ class Checker():
           if frags:
             statuses, rurl = self.check_url(url, frags, local_html=local_html)
             for frag, status in zip(frags, statuses):
-              data = (url + '#' + frag, (status, rurl))
+              data = (url + '#' + frag if frag else url, (status, rurl))
               while data:
                 try:
                   r.put(data, False, 0.01)
@@ -349,22 +353,25 @@ class Checker():
     >>> c = Checker()
     >>> urls = ['http://example.com']
     >>> list(c._check_groupby(urls))
-    [('http://example.com', ())]
+    [('http://example.com', ('',))]
     >>> urls = [
     ...   'http://example.com',
     ...   'http://example.com/foo#bar1',
     ...   'http://example.com/foo#bar2',
+    ...   'http://example.com/foobar',
+    ...   'http://example.com/foobar#blah',
     ... ]
     >>> list(c._check_groupby(urls)) # doctest: +NORMALIZE_WHITESPACE
-    [('http://example.com', ()),
-     ('http://example.com/foo', ('bar1', 'bar2'))]
+    [('http://example.com', ('',)),
+     ('http://example.com/foo', ('bar1', 'bar2')),
+     ('http://example.com/foobar', ('', 'blah'))]
     >>> urls = ['#foo1', '#foo2']
     >>> list(c._check_groupby(urls))
     [('', ('foo1', 'foo2'))]
     """
     key = lambda item: item[0]
     for url, g in groupby(sorted(map(urldefrag, urls), key=key), key):
-      yield url, tuple(filter(None, (item[1] for item in g)))
+      yield url, tuple(item[1] for item in g)
 
   def check(self, f=None):
     """Check links

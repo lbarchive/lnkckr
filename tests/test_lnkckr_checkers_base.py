@@ -259,6 +259,25 @@ class BaseCheckerTestCase(unittest.TestCase):
     self.assertEqual(checker.links, expect)
     self.assertEqual(self.httpd_requests.value, req_count + 1)
 
+  def test_check_fragments_1(self):
+    """Test same url with and without fragments and only make HTTP request
+    once.
+    """
+    checker = self.checker
+
+    req_count = self.httpd_requests.value
+    checker.add_link(H + '200')
+    checker.add_link(H + '200#foobar')
+    checker.HEADERS['X-Echo'] = '<h1 id="foobar">blah</h1>'
+    checker.check()
+
+    expect = {
+      H + '200': {'status': '200', 'redirection': None},
+      H + '200#foobar': {'status': '200', 'redirection': None},
+    }
+    self.assertEqual(checker.links, expect)
+    self.assertEqual(self.httpd_requests.value, req_count + 1)
+
   def test_check_local_fragments(self):
     """Test local fragments and if make no HTTP requests"""
     checker = self.checker
