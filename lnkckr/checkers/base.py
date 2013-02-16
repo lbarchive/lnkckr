@@ -32,6 +32,7 @@ try:
   from queue import Empty, Full
 except ImportError:
   from Queue import Empty, Full
+import re
 import socket
 import traceback
 try:
@@ -210,13 +211,26 @@ class Checker():
 
   # =====
 
-  def _check_url_frag(self, data):
+  RE_ID_NAME = re.compile(r'\b(?:id|name)=(?P<q>[\'"])(.*?)(?P=q)', re.I)
 
+  def _check_url_frag(self, data):
+    """search for fragment in HTML attributes id or name look-likes
+
+    return '200' if found else '###'
+
+    >>> c = Checker()
+    >>> f = c._check_url_frag
+    >>> f(('foo', 'id="foo"'))
+    '200'
+    >>> f(('foo', 'id="nofoo"'))
+    '###'
+    >>> f(('bar', 'name="bar"'))
+    '200'
+    """
     frag, body = data
-    if 'id="%s"' % frag in body:
-      return '200'
-    elif "id='%s'" % frag in body:
-      return '200'
+    for m in self.RE_ID_NAME.finditer(body):
+      if frag == m.group(2):
+        return '200'
     return '###'
 
   def check_url(self, url, frags=None, local_html=None):
