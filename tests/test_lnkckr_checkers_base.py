@@ -29,6 +29,7 @@ except ImportError:
   from io import StringIO
 import json
 from multiprocessing import Process, Value
+from random import randint
 import re
 import unittest
 
@@ -36,7 +37,9 @@ from lnkckr.checkers.base import Checker
 
 
 HOST = 'localhost'
-PORT = 8000
+# randomize the port for test server. why chose 32767 cap:
+# http://en.wikipedia.org/wiki/Ephemeral_port
+PORT = randint(8000, 32767)
 H = 'http://%s:%s/' % (HOST, PORT)
 
 
