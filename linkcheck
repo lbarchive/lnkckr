@@ -62,9 +62,7 @@ def main():
     f = lambda item: item[1]['status'] == args.status
   checker.check(f)
   print()
-  checker.print_report()
-  checker.print_summary()
-  checker.print_toplist()
+  checker.print_all()
 
 
 if __name__ == '__main__':

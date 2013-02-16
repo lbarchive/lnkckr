@@ -84,7 +84,6 @@ class Checker(BaseChecker):
 
     for post in link['posts']:
       print('  %s' % post)
-    print()
 
   # -----
 
@@ -118,3 +117,11 @@ class Checker(BaseChecker):
     for post, count in islice(sorted(links, key=f, reverse=True), 10):
       print('%6d %s' % (count, post))
     print()
+
+  # -----
+
+  def print_all(self):
+
+    self.print_report()
+    self.print_summary()
+    self.print_toplist()

@@ -442,7 +442,7 @@ class Checker():
       return '\033[1;36m[%s]\033[0m' % status
     if status == '200':
       return '\033[1;32m[%s]\033[0m' % status
-    if status == 'SKP':
+    if status in ('SKP', 'SCH'):
       return '\033[1;33m[%s]\033[0m' % status
     else:
       return '\033[1;31m[%s]\033[0m' % status
@@ -453,7 +453,7 @@ class Checker():
     redir = link['redirection']
     print('%s %s' % (self.color_status(status), url), end='')
     if redir:
-      print(' \033[1;33m->\033[0m %s' % redir, end='')
+      print(' \033[1;33m\n   ->\033[0m %s' % redir, end='')
     print()
 
   def print_report(self):
@@ -480,8 +480,7 @@ class Checker():
 
   def print_report_link(self, url, link):
 
-    status = link['status']
-    if status in (None, '200', 'SKP'):
+    if link['status'] in (None, '200', 'SCH', 'SKP'):
       return
     self.format_status(url, link)
     self.print_report_link_data(url, link)
@@ -512,6 +511,7 @@ class Checker():
 
   # -----
 
-  def print_toplist(self):
+  def print_all(self):
 
-    pass
+    self.print_report()
+    self.print_summary()
