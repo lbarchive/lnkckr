@@ -64,6 +64,7 @@ def main():
   print()
   checker.print_report()
   checker.print_summary()
+  checker.print_toplist()
 
 
 if __name__ == '__main__':

@@ -24,7 +24,7 @@ try:
   from io import StringIO
 except:
   from StringIO import StringIO
-from itertools import chain
+from itertools import chain, groupby, islice, product
 from lxml import etree
 
 from lnkckr.checkers.base import Checker as BaseChecker
@@ -95,3 +95,26 @@ class Checker(BaseChecker):
     cstatus = self.color_status(status)
 
     print('%s %5d links from %5d posts' % (cstatus, nlinks, nposts))
+
+  # -----
+
+  def print_toplist(self):
+
+    print('===========')
+    print('* toplist *')
+    print('===========')
+    print()
+
+    # make list of (status, postlink) from links
+    f = lambda link: link['status'] not in (None, '200', 'SCH', 'SKP')
+    links = filter(f, self.links.values())
+    links = (product((link['status'],), link['posts']) for link in links)
+    links = chain.from_iterable(links)
+    f = lambda link: link[1]
+    links = groupby(sorted(links, key=f), key=f)
+    links = ((post, sum(1 for _ in g)) for post, g in links)
+
+    print('%6s %s' % ('Errors', 'Post URL'))
+    for post, count in islice(sorted(links, key=f, reverse=True), 10):
+      print('%6d %s' % (count, post))
+    print()

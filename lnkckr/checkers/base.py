@@ -488,3 +488,9 @@ class Checker():
 
     nlinks = len(links)
     print('%s %5d links' % (self.color_status(status), nlinks))
+
+  # -----
+
+  def print_toplist(self):
+
+    pass
