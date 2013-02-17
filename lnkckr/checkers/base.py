@@ -240,11 +240,11 @@ class Checker():
   def check_url(self, url, frags=None, local_html=None):
     """Check a url
 
-    Returns (final status code(s) in list of string, final redirect url)
+    Returns (final status code(s) in tuple of string, final redirect url)
 
     >>> c = Checker()
     >>> c.check_url('http://example.com') # doctest: +SKIP
-    ('200', 'http://www.iana.org/domains/example')
+    (('200',), 'http://www.iana.org/domains/example')
     """
     MAX_REDIRS = 10
     redirs = 0
@@ -304,11 +304,9 @@ class Checker():
 
     if start_url == url and not redirs:
       url = None
-    if frags:
-      if not statuses:
-        statuses = [status]*len(frags)
-      return statuses, url
-    return status, url
+    if not statuses:
+      statuses = (status,)*len(frags)
+    return statuses, url
 
   def check_worker(self, q, r, running, data):
 
@@ -317,18 +315,16 @@ class Checker():
       while not q.empty() or running.value:
         try:
           url, frags = q.get(timeout=0.01)
-          if frags:
-            statuses, rurl = self.check_url(url, frags, local_html=local_html)
-            for frag, status in zip(frags, statuses):
-              data = (url + '#' + frag if frag else url, (status, rurl))
-              while data:
-                try:
-                  r.put(data, False, 0.01)
-                  data = None
-                except Full:
-                  pass
-            continue
-          r.put((url, self.check_url(url, local_html=local_html)))
+          statuses, rurl = self.check_url(url, frags, local_html=local_html)
+          for frag, status in zip(frags, statuses):
+            data = (url + '#' + frag if frag else url, (status, rurl))
+            while data:
+              try:
+                r.put(data, False, 0.01)
+                data = None
+              except Full:
+                pass
+          continue
         except Empty:
           pass
     except KeyboardInterrupt:
