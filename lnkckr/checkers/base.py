@@ -279,8 +279,13 @@ class Checker():
           method = 'GET'
         conn.request(method, p, headers=self.HEADERS)
         resp = conn.getresponse()
-        if resp.status == 200 and frags:
-          rbody = resp.read().decode('utf8')
+        if resp.status == 200 and frags != ('',):
+          # any non text/html result ### as such fragment isn't found
+          if not resp.getheader('Content-Type', '').startswith('text/html'):
+            status = '###'
+            break
+          # assume characters in fragment are valid ASCII
+          rbody = resp.read().decode('ascii', 'ignore')
           pairs = product(frags, (rbody,))
           statuses = tuple(map(self._check_url_frag, pairs))
           break
