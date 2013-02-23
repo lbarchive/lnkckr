@@ -435,7 +435,9 @@ class Checker():
     if self.json_filename:
       self.save_json(self.json_filename)
 
-  # =====
+  ###########################
+  # report output functions #
+  ###########################
 
   def color_status(self, status):
 
@@ -457,12 +459,22 @@ class Checker():
       print(' \033[1;33m\n   ->\033[0m %s' % redir, end='')
     print()
 
+  def print_heading(self, text):
+
+    bar = '{0:{f}^{l}s}'.format('', f='=', l=len(text) + 4)
+    print('{0}\n= {1} =\n{0}\n'.format(bar, text))
+
+  def print_all(self):
+
+    self.print_report()
+    self.print_summary()
+
+  # report
+  #########
+
   def print_report(self):
 
-    print('==========')
-    print('* report *')
-    print('==========')
-    print()
+    self.print_heading('report')
 
     links = self.links
 
@@ -490,29 +502,24 @@ class Checker():
 
     pass
 
-  # -----
+  # summary
+  ##########
 
   def print_summary(self):
 
-    print('===========')
-    print('* summary *')
-    print('===========')
-    print()
+    self.print_heading('summary')
 
     key = lambda link: link['status'] or '---'
     for status, g in groupby(sorted(self.links.values(), key=key), key=key):
       links = list(g)
       self.print_summary_status(status, links)
-    print()
+    self.print_summary_footer()
 
   def print_summary_status(self, status, links):
 
     nlinks = len(links)
     print('%s %5d links' % (self.color_status(status), nlinks))
 
-  # -----
+  def print_summary_footer(self):
 
-  def print_all(self):
-
-    self.print_report()
-    self.print_summary()
+    print()

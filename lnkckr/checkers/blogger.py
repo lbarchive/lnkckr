@@ -78,14 +78,26 @@ class Checker(BaseChecker):
           links[link]['posts'].append(post_link)
     self.links = links
 
-  # =====
+  ###########################
+  # report output functions #
+  ###########################
+
+  def print_all(self):
+
+    self.print_report()
+    self.print_summary()
+    self.print_toplist()
+
+  # report
+  #########
 
   def print_report_link_data(self, url, link):
 
     for post in link['posts']:
       print('  %s' % post)
 
-  # -----
+  # summary
+  ##########
 
   def print_summary_status(self, status, links):
 
@@ -95,14 +107,12 @@ class Checker(BaseChecker):
 
     print('%s %5d links from %5d posts' % (cstatus, nlinks, nposts))
 
-  # -----
+  # toplist
+  ##########
 
   def print_toplist(self):
 
-    print('===========')
-    print('* toplist *')
-    print('===========')
-    print()
+    self.print_heading('toplist')
 
     # make list of (status, postlink) from links
     f = lambda link: link['status'] not in (None, '200', 'SCH', 'SKP')
@@ -117,11 +127,3 @@ class Checker(BaseChecker):
     for post, count in islice(sorted(links, key=f, reverse=True), 10):
       print('%6d %s' % (count, post))
     print()
-
-  # -----
-
-  def print_all(self):
-
-    self.print_report()
-    self.print_summary()
-    self.print_toplist()
