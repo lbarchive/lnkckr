@@ -23,7 +23,7 @@ __library__ = 'lnkckr'
 __description__ = 'Link checking library'
 __copyright__ = 'Copyright 2013, Yu Jie Lin'
 __license__ = 'MIT'
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 __website__ = 'http://bitbucket.org/livibetter/lnkckr'
 
 __author__ = 'Yu-Jie Lin'

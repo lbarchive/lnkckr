@@ -3,6 +3,8 @@ CHANGES
 
 ## Development
 
+## Version 0.1.2 (2013-02-23T06:08:12Z)
+
  * [base] add `local_html` for checking local fragment
  * [html] use `local_html` to check local fragment
  * add `print_toplist` for a list of worse post/entry/etc

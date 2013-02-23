@@ -1,7 +1,7 @@
 lnkckr
 ======
 
-**lnkckr** is a link checking library with command-line script `linkcheck`. It's intended to be used to checkbroken links and it can be interrupted at any time, then resumes from saved JSON file.
+**lnkckr** is a link checking library with command-line script `linkcheck`. It's intended to be used to check broken links and it can be interrupted at any time, then resumes from saved JSON file.
 
 It supports Python 2.7 and Python 3.
 
@@ -37,7 +37,7 @@ Results
 
 * `[---]`: the url hasn't been checked.
 * `[???]`: where the `???` is the HTTP status code.
-* `[###]`: means the fragment in the URL can't be found in the response body in format of `id="<fragment>"`.
+* `[###]`: means the fragment in the URL can't be found in the response body in format of `id="<fragment>"` or `name="<fragment>"`.
 * `[SCH]`: unsupported HTTP scheme.
 * `[SKP]`: the url is skipped.
 * `[RRR]`: the url results reaching maximal redirection limit.
@@ -47,7 +47,7 @@ Results
 Note
 ----
 
-The output of lnkckr is similar to my two-year-old shell script `linkckr.sh`, I have also included it in the repositorysince lnkckr is kind of continuation of `linkckr.sh`, here is a [blog post about it](http://blog.yjl.im/2011/02/link-checker-bash-script-using-xmllint.html).
+The output of lnkckr is similar to my two-year-old shell script `linkckr.sh`, I have also included it in the repository since lnkckr is kind of continuation of `linkckr.sh`, here is a [blog post about it](http://blog.yjl.im/2011/02/link-checker-bash-script-using-xmllint.html).
 
 Related links
 -------------
@@ -63,6 +63,5 @@ Related links
 License
 -------
 
-lnkckr is licensed under the MIT License, see `COPYING`.
-
+    lnkckr is licensed under the MIT License, see COPYING.
     Copyright (C) 2013 by Yu-Jie Lin
