@@ -99,13 +99,40 @@ class Checker(BaseChecker):
   # summary
   ##########
 
-  def print_summary_status(self, status, links):
+  def print_summary_status(self, data):
+
+    data2 = []
+    for status, links in data:
+      nlinks = sum(1 for l in links)
+      nposts = len(set(chain.from_iterable(link['posts'] for link in links)))
+      data2.append((status, nlinks, nposts))
+
+    l_links = max(self.num_len(item[1]) for item in data2)
+    l_posts = max(self.num_len(item[2]) for item in data2)
+
+    for status, nlinks, nposts in data2:
+      cstatus = self.color_status(status)
+
+      print('{} {:{l_links},d} links from {:{l_posts},d} posts'.format(cstatus,
+            nlinks, nposts, l_links=l_links, l_posts=l_posts))
+
+  def print_summary_status1(self, status, links):
 
     nlinks = len(links)
     nposts = len(set(chain.from_iterable(link['posts'] for link in links)))
     cstatus = self.color_status(status)
 
-    print('%s %5d links from %5d posts' % (cstatus, nlinks, nposts))
+    print('{} {:6,d} links from {:6,d} posts'.format(cstatus, nlinks, nposts))
+
+  def print_summary_footer(self):
+
+    links = self.links
+    posts = set(chain.from_iterable(link['posts'] for link in links.values()))
+    nposts = len(posts)
+
+    print()
+    print('TOTAL {:,} links from {:,} posts'.format(len(links), nposts))
+    print()
 
   # toplist
   ##########

@@ -459,6 +459,17 @@ class Checker():
       print(' \033[1;33m\n   ->\033[0m %s' % redir, end='')
     print()
 
+  def num_len(self, n):
+    """Return length of n in string including thousands separator
+
+    >>> c = Checker()
+    >>> c.num_len(123)
+    3
+    >>> c.num_len(1234)
+    5
+    """
+    return len('{:,d}'.format(n))
+
   def print_heading(self, text):
 
     bar = '{0:{f}^{l}s}'.format('', f='=', l=len(text) + 4)
@@ -510,16 +521,26 @@ class Checker():
     self.print_heading('summary')
 
     key = lambda link: link['status'] or '---'
+    data = []
     for status, g in groupby(sorted(self.links.values(), key=key), key=key):
-      links = list(g)
-      self.print_summary_status(status, links)
+      data.append((status, list(g)))
+    self.print_summary_status(data)
     self.print_summary_footer()
 
-  def print_summary_status(self, status, links):
+  def print_summary_status(self, data):
 
-    nlinks = len(links)
-    print('%s %5d links' % (self.color_status(status), nlinks))
+    data2 = []
+    for status, links in data:
+      nlinks = sum(1 for l in links)
+      data2.append((status, nlinks))
+
+    l = max(self.num_len(item[1]) for item in data2)
+
+    for status, nlinks in data2:
+      print('{} {:{l},d} links'.format(self.color_status(status), nlinks, l=l))
 
   def print_summary_footer(self):
 
+    print()
+    print('TOTAL {:,} links'.format(len(self.links)))
     print()

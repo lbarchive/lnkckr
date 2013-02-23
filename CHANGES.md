@@ -10,6 +10,7 @@ CHANGES
  * fix #1: url not checked when same url with fragment also being checked
  * url with fragment has return text/html type or it will be `[###]`
  * fragment now has to be valid ASCII or will not be found
+ * add total numbers in summary
 
 ## Version 0.1.1 (2013-02-15T12:07:09Z)
 
