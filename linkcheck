@@ -26,6 +26,7 @@ import json
 from os import path
 import sys
 
+from lnkckr import __version__
 from lnkckr.checkers import checkers
 
 
@@ -39,6 +40,8 @@ def main():
   parser.add_argument('-s', '--status',
                       help=('re-check links with status. '
                             'Valid values: all, HTTP status code'))
+  parser.add_argument('--version', action='version',
+                      version='%(prog)s ' + __version__)
   args = parser.parse_args()
 
   for checker in checkers:
