@@ -3,7 +3,10 @@ CHANGES
 
 ## Development
 
+## Version 0.1.3 (2013-03-24T23:15:55Z)
+
  * add `--version` option
+ * fix HTML unquoted attribute names for id and name matching
 
 ## Version 0.1.2 (2013-02-23T06:08:12Z)
 
