@@ -211,7 +211,9 @@ class Checker():
 
   # =====
 
-  RE_ID_NAME = re.compile(r'\b(?:id|name)=(?P<q>[\'"])(.*?)(?P=q)', re.I)
+  # http://www.w3.org/TR/html-markup/syntax.html#syntax-attributes
+  RE_ID_NAME = re.compile(r'\b(?:id|name) *= *'
+                          r'(?:(?P<q>[\'"])(.+?)(?P=q)|([^"\'=><`]+))', re.I)
 
   def _check_url_frag(self, data):
     """search for fragment in HTML attributes id or name look-likes
@@ -222,10 +224,14 @@ class Checker():
     >>> f = c._check_url_frag
     >>> f(('', 'blah'))
     '200'
+    >>> f(('foo', 'id=foo'))
+    '200'
     >>> f(('foo', 'id="foo"'))
     '200'
     >>> f(('foo', 'id="nofoo"'))
     '###'
+    >>> f(('bar', 'name=bar'))
+    '200'
     >>> f(('bar', 'name="bar"'))
     '200'
     """
@@ -233,7 +239,7 @@ class Checker():
     if frag == '':
       return '200'
     for m in self.RE_ID_NAME.finditer(body):
-      if frag == m.group(2):
+      if frag == m.group(2) or m.group(3):
         return '200'
     return '###'
 
