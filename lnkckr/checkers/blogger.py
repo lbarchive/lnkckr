@@ -57,7 +57,12 @@ class Checker(BaseChecker):
       if kind.attrib.get('term') not in VALID_KINDS:
         continue
       sel = "ns:link[@rel='alternate']"
-      post_link = entry.find(sel, namespaces=NS).attrib.get('href')
+      altlink = entry.find(sel, namespaces=NS)
+      if altlink is None:
+        # for scheduled posts, the post URL isn't decided yet, skip such posts
+        # since lnkckr wouldn't be possible to provide URL of the posts.
+        continue
+      post_link = altlink.attrib.get('href')
 
       content = entry.find('ns:content', namespaces=NS)
       content_text = content.text

@@ -3,6 +3,8 @@ CHANGES
 
 ## Development
 
+ * [blogger] skip scheduled posts because of no post URLs
+
 ## Version 0.1.3 (2013-03-24T23:15:55Z)
 
  * add `--version` option
