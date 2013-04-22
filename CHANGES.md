@@ -4,6 +4,7 @@ CHANGES
 ## Development
 
  * [blogger] skip scheduled posts because of no post URLs
+ * [base] fix encoding issue with URL with non-ISO-8859-1 characters in path
 
 ## Version 0.1.3 (2013-03-24T23:15:55Z)
 

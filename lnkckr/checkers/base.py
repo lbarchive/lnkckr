@@ -36,8 +36,9 @@ import re
 import socket
 import traceback
 try:
-  from urllib.parse import urldefrag, urljoin, urlparse
+  from urllib.parse import quote, urldefrag, urljoin, urlparse
 except ImportError:
+  from urllib import quote
   from urlparse import urldefrag, urljoin, urlparse
 try:
   from urllib.request import urlopen
@@ -283,7 +284,7 @@ class Checker():
           p += '?' + url_comp.query
         if frags:
           method = 'GET'
-        conn.request(method, p, headers=self.HEADERS)
+        conn.request(method, quote(p), headers=self.HEADERS)
         resp = conn.getresponse()
         if resp.status == 200 and frags != ('',):
           # any non text/html result ### as such fragment isn't found

@@ -218,6 +218,15 @@ class BaseCheckerTestCase(unittest.TestCase):
     expect = {H + 'loop': {'status': 'RRR', 'redirection': H + 'loop'}}
     self.assertEqual(checker.links, expect)
 
+  def test_check_non_iso8859_1(self):
+
+    checker = self.checker
+
+    checker.add_link(H + '200/áéíóú')
+    checker.check()
+    expect = {H + '200/áéíóú': {'status': '200', 'redirection': None}}
+    self.assertEqual(checker.links, expect)
+
   # -----
 
   def test_check_fragment(self):
