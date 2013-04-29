@@ -53,7 +53,11 @@ class Handler(BaseHTTPRequestHandler):
     self.server.requests.value += 1
     redir = H
     m = self.RE_CODE.match(self.path)
-    if m:
+    MatchPath = self.headers.get('X-MatchPath')
+    if MatchPath and self.path != MatchPath:
+      print('X-MatchPath: %s != %s' % (self.path, MatchPath))
+      code = 404
+    elif m:
       code = int(m.group(1))
     elif self.path == '/':
       code = 200
@@ -223,8 +227,19 @@ class BaseCheckerTestCase(unittest.TestCase):
     checker = self.checker
 
     checker.add_link(H + '200/áéíóú')
+    checker.HEADERS['X-MatchPath'] = '/200/%C3%A1%C3%A9%C3%AD%C3%B3%C3%BA'
     checker.check()
     expect = {H + '200/áéíóú': {'status': '200', 'redirection': None}}
+    self.assertEqual(checker.links, expect)
+
+  def test_check_query(self):
+
+    checker = self.checker
+
+    checker.add_link(H + '200?id=1234')
+    checker.HEADERS['X-MatchPath'] = '/200?id=1234'
+    checker.check()
+    expect = {H + '200?id=1234': {'status': '200', 'redirection': None}}
     self.assertEqual(checker.links, expect)
 
   # -----
