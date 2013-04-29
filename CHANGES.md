@@ -3,6 +3,9 @@ CHANGES
 
 ## Development
 
+* [base] fix query string getting quoted by mistake by e79523b
+* [base] make HEADERS per instance not per class
+
 ## Version 0.1.4 (2013-04-22T22:41:51Z)
 
  * [blogger] skip scheduled posts because of no post URLs

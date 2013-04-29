@@ -56,15 +56,17 @@ class Checker():
   QUEUE_SIZE = 20
   SAVE_INT = 100
 
-  # User-Agent for some website like Wikipedia. Without it, most of requests
-  # result in 403.
-  HEADERS = {'User-Agent': '%s/%s' % (lnkckr.__name__, lnkckr.__version__)}
-
   def __init__(self):
 
     self.data = {}
     self.links = {}
     self.json_filename = None
+
+    # User-Agent for some website like Wikipedia. Without it, most of requests
+    # result in 403.
+    self.HEADERS = {
+      'User-Agent': '%s/%s' % (lnkckr.__name__, lnkckr.__version__)
+    }
 
   def load(self, src=None, jsonsrc=None, do_update=False, update_status=False):
     """Load links from a file
@@ -279,12 +281,12 @@ class Checker():
         break
 
       try:
-        p = url_comp.path
+        p = quote(url_comp.path)
         if url_comp.query:
           p += '?' + url_comp.query
         if frags:
           method = 'GET'
-        conn.request(method, quote(p), headers=self.HEADERS)
+        conn.request(method, p, headers=self.HEADERS)
         resp = conn.getresponse()
         if resp.status == 200 and frags != ('',):
           # any non text/html result ### as such fragment isn't found
