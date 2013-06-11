@@ -543,7 +543,7 @@ class Checker():
       nlinks = sum(1 for l in links)
       data2.append((status, nlinks))
 
-    l = max(self.num_len(item[1]) for item in data2)
+    l = max(self.num_len(item[1]) for item in data2) if data2 else 0
 
     for status, nlinks in data2:
       print('{} {:{l},d} links'.format(self.color_status(status), nlinks, l=l))
