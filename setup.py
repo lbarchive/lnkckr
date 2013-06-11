@@ -32,6 +32,8 @@ EXCLUDE_SCRIPTS = ()
 library_name = 'lnkckr'
 script_name = 'linkcheck'
 
+CHECK_LIST = (script_name, '.')
+
 # ============================================================================
 
 
@@ -96,7 +98,7 @@ class cmd_pep8(Command):
     print('Results')
     print('=======')
     print()
-    report = p8.check_files('.')
+    report = p8.check_files(CHECK_LIST)
 
     print()
     print('Statistics')
@@ -152,7 +154,7 @@ class cmd_pyflakes(Command):
     print('Results')
     print('=======')
     print()
-    warnings = api.checkRecursive('.', reporter)
+    warnings = api.checkRecursive(CHECK_LIST, reporter)
     print()
     print('Total warnings: %d' % warnings)
 
@@ -186,7 +188,7 @@ class cmd_pylint(Command):
     print()
     print('Exclude:', EXCLUDE_SCRIPTS)
 
-    files = ['setup.py', script_name, 'lnkckr'] + glob('tests/*.py')
+    files = list(CHECK_LIST) + ['setup.py', 'lnkckr'] + glob('tests/*.py')
     args = [
       '--ignore=%s' % ','.join(EXCLUDE_SCRIPTS),
       '--output-format=colorized',
