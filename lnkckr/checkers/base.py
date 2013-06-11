@@ -56,11 +56,14 @@ class Checker():
   QUEUE_SIZE = 20
   SAVE_INT = 100
 
-  def __init__(self):
+  def __init__(self, **cfg):
 
     self.data = {}
     self.links = {}
     self.json_filename = None
+
+    self.exclude_status = (cfg['exclude_status'] if 'exclude_status' in cfg
+                           else (None, 200))
 
     # User-Agent for some website like Wikipedia. Without it, most of requests
     # result in 403.
@@ -513,7 +516,7 @@ class Checker():
 
   def print_report_link(self, url, link):
 
-    if link['status'] in (None, '200', 'SCH', 'SKP'):
+    if link['status'] in self.exclude_status:
       return
     self.format_status(url, link)
     self.print_report_link_data(url, link)

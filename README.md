@@ -13,13 +13,14 @@ Installation
 Usage
 -----
 
-    linkcheck [-c CHECKER] [-u|--update] [-f FILE] [-j JSON] [-s STATUS]
+    linkcheck [-c CHECKER] [-u|--update] [-f FILE] [-j JSON] [-s STATUS] [-x EXCLUDE_STATUS]
 
 * `CHECKER` is what checker used to process `FILE`.
 * `-u` or `--update` instructs lnkckr to update the JSON with input file. Normally, when `-j JSON` presents, lnkckr ignore the input file.
 * `FILE` is the input filename or URL.
 * `JSON` is the filename of saved progress file. If the `FILE` is a filename, then `FILE` can be omitted, an filename is assigned automatically unless using different filename is desired.
 * `STATUS` indicates re-check url with specific status.
+* `EXCLUDE_STATUS` is a CSV which lists what links with specified status will not be shown in report section. Default is `unchecked,200`.
 
 Here is a sample:
 

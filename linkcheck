@@ -22,8 +22,6 @@
 
 from __future__ import print_function
 import argparse
-import json
-from os import path
 import sys
 
 from lnkckr import __version__
@@ -34,12 +32,17 @@ def main():
 
   parser = argparse.ArgumentParser()
   parser.add_argument('-c', '--checker')
-  parser.add_argument('-u', '--update', action='store_true', help='update JSON')
+  parser.add_argument('-u', '--update', action='store_true',
+                      help='update JSON')
   parser.add_argument('-f', '--file')
   parser.add_argument('-j', '--json')
   parser.add_argument('-s', '--status',
                       help=('re-check links with status. '
                             'Valid values: all, HTTP status code'))
+  parser.add_argument('-x', '--exclude-status',
+                      default='unchecked,200',
+                      help=('Exclude links with checking status from listing '
+                            'in report section. (Default: %(default)s)'))
   parser.add_argument('--version', action='version',
                       version='%(prog)s ' + __version__)
   args = parser.parse_args()
@@ -56,9 +59,14 @@ def main():
     print('No files to process', file=sys.stderr)
     sys.exit(1)
 
-  checker = Checker()
+  f = lambda s: None if s == 'unchecked' else s
+  exclude_status = args.exclude_status.split(',')
+  exclude_status = tuple(map(f, exclude_status))
+  cfg = {
+    'exclude_status': exclude_status
+  }
+  checker = Checker(**cfg)
   checker.load(args.file, args.json, args.update)
-  links = checker.links
 
   f = None
   if args.status:

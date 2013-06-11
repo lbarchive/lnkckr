@@ -3,6 +3,8 @@ CHANGES
 
 ## Development
 
+* add `-x` (`--exclude-status`) option for specifying excluded statuses from report section. (#2)
+
 ## Version 0.1.5 (2013-04-29T16:15:30Z)
 
 * [base] fix query string getting quoted by mistake by e79523b

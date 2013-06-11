@@ -147,7 +147,7 @@ class Checker(BaseChecker):
     self.print_heading('toplist')
 
     # make list of (status, postlink) from links
-    f = lambda link: link['status'] not in (None, '200', 'SCH', 'SKP')
+    f = lambda link: link['status'] not in self.exclude_status
     links = filter(f, self.links.values())
     links = (product((link['status'],), link['posts']) for link in links)
     links = chain.from_iterable(links)
