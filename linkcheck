@@ -69,7 +69,9 @@ def main():
   checker.load(args.file, args.json, args.update)
 
   f = None
-  if args.status:
+  if args.status == 'all':
+    f = lambda item: True
+  elif args.status:
     f = lambda item: item[1]['status'] == args.status
   checker.check(f)
   print()

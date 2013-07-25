@@ -3,6 +3,8 @@ CHANGES
 
 ## Development
 
+* fix `all` option of `--status`.
+
 ## Version 0.2.0 (2013-06-11T22:53:15Z)
 
 * add `-x` (`--exclude-status`) option for specifying excluded statuses from report section. (#2)
