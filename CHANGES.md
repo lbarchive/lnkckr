@@ -3,6 +3,8 @@ CHANGES
 
 ## Development
 
+## Version 0.2.1 (2013-07-25T02:53:45Z)
+
 * fix `all` option of `--status`.
 
 ## Version 0.2.0 (2013-06-11T22:53:15Z)
