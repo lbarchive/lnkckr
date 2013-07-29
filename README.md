@@ -5,6 +5,10 @@ lnkckr
 
 It supports Python 2.7 and Python 3.
 
+**Contents**
+
+[TOC]
+
 Installation
 ------------
 
@@ -15,35 +19,42 @@ Usage
 
     linkcheck [-c CHECKER] [-u|--update] [-f FILE] [-j JSON] [-s STATUS] [-x EXCLUDE_STATUS]
 
-* `CHECKER` is what checker used to process `FILE`.
-* `-u` or `--update` instructs lnkckr to update the JSON with input file. Normally, when `-j JSON` presents, lnkckr ignore the input file.
-* `FILE` is the input filename or URL.
-* `JSON` is the filename of saved progress file. If the `FILE` is a filename, then `FILE` can be omitted, an filename is assigned automatically unless using different filename is desired.
-* `STATUS` indicates re-check url with specific status.
-* `EXCLUDE_STATUS` is a CSV which lists what links with specified status will not be shown in report section. Default is `unchecked,200`.
+Arugment | Detail
+--- | ---
+`CHECKER` | what checker used to process `FILE`, see *Checkers* below.
+`-u` or `--update` | update the JSON with input file. Wihout this, when `JSON` used, `FILE` is ignored.
+`FILE` | the input filename or URL.
+`JSON` | the filename of saved progress file. If the `FILE` is a filename, then `FILE` can be omitted, an filename is assigned automatically unless using different filename is desired.
+`STATUS` | indicates re-check url with specific status.
+`EXCLUDE_STATUS` | a CSV which lists what links with specified status will not be shown in report section. Default is `unchecked,200`.
 
-Here is a sample:
+Screenshot
+----------
 
 ![Using lnkckr to check a Blogger XML Export file](https://lh5.googleusercontent.com/-JBBe-HVH_0M/URuaB0yeZHI/AAAAAAAAEc8/E6O7uL9gmJI/s800/lnkckr-blogger.png)
 
 Checkers
 --------
 
-* `list`: input file is a list of links, one URL per line.
-* `html`: input file is a HTML file.
-* `blogger`: input file is a Blogger XML Export file.
+Checker | Description
+--- | ---
+`list` | input file is a list of links, one URL per line.
+`html` | input file is a HTML file.
+`blogger` | input file is a Blogger XML Export file.
 
 Results
 -------
 
-* `[---]`: the url hasn't been checked.
-* `[???]`: where the `???` is the HTTP status code.
-* `[###]`: means the fragment in the URL can't be found in the response body in format of `id="<fragment>"` or `name="<fragment>"`.
-* `[SCH]`: unsupported HTTP scheme.
-* `[SKP]`: the url is skipped.
-* `[RRR]`: the url results reaching maximal redirection limit.
-* `[XXX]`: unknown error.
-* `[000]`: timeout when trying to check the url.
+Symbol | Description
+--- | ---
+`[---]` | the url hasn't been checked.
+`[???]` | where the `???` is the HTTP status code.
+`[###]` | means the fragment in the URL can't be found in the response body in format of `id="<fragment>"` or `name="<fragment>"`.
+`[SCH]` | unsupported HTTP scheme.
+`[SKP]` | the url is skipped.
+`[RRR]` | the url results reaching maximal redirection limit.
+`[XXX]` | unknown error.
+`[000]` | timeout when trying to check the url.
 
 Note
 ----
