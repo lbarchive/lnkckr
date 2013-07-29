@@ -232,7 +232,7 @@ classifiers = [
   'Operating System :: POSIX :: Linux',
   'Programming Language :: Python :: 2.7',
   'Programming Language :: Python :: 3',
-  'Topic :: Other/Nonlisted Topic',
+  'Topic :: Internet :: WWW/HTTP :: Site Management :: Link Checking',
 ]
 
 packages = [
