@@ -1,4 +1,4 @@
-# Copyright (C) 2013 by Yu-Jie Lin
+# Copyright (c) 2013, 2015 Yu-Jie Lin
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +34,7 @@ except ImportError:
   from Queue import Empty, Full
 import re
 import socket
+import time
 import traceback
 try:
   from urllib.parse import quote, urldefrag, urljoin, urlparse
@@ -428,6 +429,7 @@ class Checker():
         count += 1 if self.check_update_links(r) else 0
         if count % self.SAVE_INT == 0:
           self.do_save()
+        time.sleep(0.001)
     except KeyboardInterrupt:
       pass
 

@@ -3,6 +3,7 @@ CHANGES
 
 ## Development
 
+* [base] fix CPU hogging
 * [html] fix empty post content in Blogger XML causing `lxml.etree.XMLSyntaxError: line 1: b'Tag mn invalid'`
 * [test] add empty content test
 
