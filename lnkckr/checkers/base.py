@@ -285,7 +285,9 @@ class Checker():
         break
 
       try:
-        p = quote(url_comp.path)
+        # attempt to decide whether lnkckr should quote the URL.
+        # if there is '%' in URL, then don't quote it.
+        p = url_comp.path if '%' in url_comp.path else quote(url_comp.path)
         if url_comp.query:
           p += '?' + url_comp.query
         if frags:
