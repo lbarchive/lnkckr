@@ -3,6 +3,9 @@ CHANGES
 
 ## Development
 
+* [html] fix empty post content in Blogger XML causing `lxml.etree.XMLSyntaxError: line 1: b'Tag mn invalid'`
+* [test] add empty content test
+
 ## Version 0.2.1 (2013-07-25T02:53:45Z)
 
 * fix `all` option of `--status`.

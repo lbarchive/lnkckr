@@ -1,4 +1,4 @@
-# Copyright (C) 2013 by Yu-Jie Lin
+# Copyright (C) 2013, 2015 Yu-Jie Lin
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -32,6 +32,8 @@ class Checker(BaseChecker):
     """Process a HTML file"""
     content = f.read()
     self.data['local_html'] = content
+    if not content:
+      return
 
     post = html.fromstring(content)
     for e in post.xpath('//*[@href|@src]'):

@@ -75,5 +75,4 @@ Related links
 License
 -------
 
-    lnkckr is licensed under the MIT License, see COPYING.
-    Copyright (C) 2013 by Yu-Jie Lin
+lnkckr is licensed under the MIT License, see `COPYING`.

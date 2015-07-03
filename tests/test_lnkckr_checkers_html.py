@@ -1,4 +1,4 @@
-# Copyright (C) 2013 by Yu-Jie Lin
+# Copyright (c) 2013, 2015 Yu-Jie Lin
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -75,4 +75,24 @@ class HTMLCheckerTestCase(BaseCheckerTestCase):
       '#foo1': {'status': '200', 'redirection': None},
       '#foo2': {'status': '###', 'redirection': None},
     }
+    self.assertEqual(checker.links, expect)
+
+  # =====
+
+  def test_empty_html(self):
+
+    checker = self.checker
+
+    html = ''
+    checker.process(StringIO(html))
+
+    checker.check()
+    expect = {}
+    self.assertEqual(checker.links, expect)
+
+    html = None
+    checker.process(StringIO(html))
+
+    checker.check()
+    expect = {}
     self.assertEqual(checker.links, expect)
