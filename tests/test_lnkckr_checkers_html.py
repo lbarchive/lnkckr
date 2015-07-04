@@ -73,7 +73,7 @@ class HTMLCheckerTestCase(BaseCheckerTestCase):
     checker.check()
     expect = {
       '#foo1': {'status': '200', 'redirection': None},
-      '#foo2': {'status': '###', 'redirection': None},
+      '#foo2': {'status': '200', 'redirection': None},
     }
     self.assertEqual(checker.links, expect)
 
