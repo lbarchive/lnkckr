@@ -20,6 +20,7 @@
 
 
 from __future__ import print_function
+import os
 try:
   from io import StringIO
 except:
@@ -155,7 +156,12 @@ class Checker(BaseChecker):
     links = groupby(sorted(links, key=f), key=f)
     links = ((post, sum(1 for _ in g)) for post, g in links)
 
+    LIMIT = os.environ.get('LNKCKR_BLOGGER_TOPLIST_LIMIT', None)
+    LIMIT = 10 if LIMIT is None else int(LIMIT)
+    links = sorted(links, key=f, reverse=True)
+    if LIMIT:
+      links = islice(links, LIMIT)
     print('%6s %s' % ('Errors', 'Post URL'))
-    for post, count in islice(sorted(links, key=f, reverse=True), 10):
+    for post, count in links:
       print('%6d %s' % (count, post))
     print()

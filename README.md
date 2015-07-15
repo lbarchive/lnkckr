@@ -42,6 +42,14 @@ Checker | Description
 `html` | input file is a HTML file.
 `blogger` | input file is a Blogger XML Export file.
 
+### Blogger
+
+The Blogger checker has the following environment variables:
+
+Variable | Description | Default
+--- | --- | ---
+`LNKCKR_BLOGGER_TOPLIST_LIMIT` | the amount of entries listed in toplist. 0 means list all entries. | 10
+
 Results
 -------
 

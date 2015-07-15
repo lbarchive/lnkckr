@@ -6,6 +6,7 @@ CHANGES
 * [base] fix CPU hogging
 * [base] fix fragment check, href=#frag can also be anchor
 * [base] adjust URL quoting, only quote when there is `%` in URL
+* [blogger] add `LNKCKR_BLOGGER_TOPLIST_LIMIT` to control the amount of listed entries
 * [html] fix empty post content in Blogger XML causing `lxml.etree.XMLSyntaxError: line 1: b'Tag mn invalid'`
 * [test] add empty content test
 
