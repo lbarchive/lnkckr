@@ -172,8 +172,8 @@ class Checker():
     >>> c.links
     {'http://example.com': {'status': None}}
     >>> c.add_link('http://example.com', {'data': 'foobar'})
-    >>> c.links
-    {'http://example.com': {'status': None, 'data': 'foobar'}}
+    >>> c.links == {'http://example.com': {'status': None, 'data': 'foobar'}}
+    True
     """
     # skip blank fragment
     if url == '#':
@@ -205,12 +205,12 @@ class Checker():
     >>> c.add_link(url)
     >>> new_link = {'status': 123, 'foobar': 'blah'}
     >>> c.update_link(url, new_link)
-    >>> c.links[url]
-    {'status': None, 'foobar': 'blah'}
+    >>> c.links[url] == {'status': None, 'foobar': 'blah'}
+    True
     >>> new_link['foobar'] = 'duh'
     >>> c.update_link(url, new_link, update_status=True)
-    >>> c.links[url]
-    {'status': 123, 'foobar': 'duh'}
+    >>> c.links[url] == {'status': 123, 'foobar': 'duh'}
+    True
     """
     link = self.links[url]
     status = link['status']
