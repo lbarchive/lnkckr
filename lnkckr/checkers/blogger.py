@@ -20,16 +20,19 @@
 
 
 from __future__ import print_function
+
 import os
-try:
-  from io import StringIO
-except:
-  from StringIO import StringIO
 from itertools import chain, groupby, islice, product
+
 from lxml import etree
 
 from lnkckr.checkers.base import Checker as BaseChecker
 from lnkckr.checkers.html import Checker as HTMLChecker
+
+try:
+  from io import StringIO
+except:
+  from StringIO import StringIO
 
 
 class Checker(BaseChecker):

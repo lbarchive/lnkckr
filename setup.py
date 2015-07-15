@@ -22,9 +22,9 @@
 
 from __future__ import print_function
 
+import sys
 from distutils.core import Command, setup
 from unittest import TestLoader, TextTestRunner
-import sys
 
 # scripts to be exculded from checking
 EXCLUDE_SCRIPTS = ()

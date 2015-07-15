@@ -25,7 +25,7 @@ except ImportError:
   from io import StringIO
 
 from lnkckr.checkers.list import Checker
-from test_lnkckr_checkers_base import BaseCheckerTestCase, H
+from test_lnkckr_checkers_base import H, BaseCheckerTestCase
 
 
 class ListCheckerTestCase(BaseCheckerTestCase):

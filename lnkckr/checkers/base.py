@@ -20,22 +20,26 @@
 
 
 from __future__ import print_function
-try:
-  from http.client import HTTPConnection, HTTPSConnection
-except ImportError:
-  from httplib import HTTPConnection, HTTPSConnection
-from itertools import groupby, product
+
 import json
-from multiprocessing import Manager, Process, Queue, Value
-from os import path
-try:
-  from queue import Empty, Full
-except ImportError:
-  from Queue import Empty, Full
 import re
 import socket
 import time
 import traceback
+from itertools import groupby, product
+from multiprocessing import Manager, Process, Queue, Value
+from os import path
+
+import lnkckr
+
+try:
+  from http.client import HTTPConnection, HTTPSConnection
+except ImportError:
+  from httplib import HTTPConnection, HTTPSConnection
+try:
+  from queue import Empty, Full
+except ImportError:
+  from Queue import Empty, Full
 try:
   from urllib.parse import quote, urldefrag, urljoin, urlparse
 except ImportError:
@@ -45,8 +49,6 @@ try:
   from urllib.request import urlopen
 except ImportError:
   from urllib import urlopen
-
-import lnkckr
 
 
 class Checker():
@@ -335,7 +337,7 @@ class Checker():
     if start_url == url and not redirs:
       url = None
     if not statuses:
-      statuses = (status,)*len(frags)
+      statuses = (status,) * len(frags)
     return statuses, url
 
   def check_worker(self, q, r, running, data):

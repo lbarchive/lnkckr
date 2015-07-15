@@ -29,13 +29,12 @@ try:
 except ImportError:
   from io import StringIO
 import json
-from multiprocessing import Process, Value
-from random import randint
 import re
 import unittest
+from multiprocessing import Process, Value
+from random import randint
 
 from lnkckr.checkers.base import Checker
-
 
 HOST = 'localhost'
 # randomize the port for test server. why chose 32767 cap:

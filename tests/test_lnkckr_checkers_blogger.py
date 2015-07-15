@@ -25,7 +25,7 @@ except ImportError:
   from io import StringIO
 
 from lnkckr.checkers.blogger import Checker
-from test_lnkckr_checkers_base import BaseCheckerTestCase, H
+from test_lnkckr_checkers_base import H, BaseCheckerTestCase
 
 
 # encoding declaration in "<?xml version="1.0" encoding="UTF-8"?>" results in
