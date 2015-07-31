@@ -3,6 +3,8 @@ CHANGES
 
 ## Development
 
+## Version 0.3.0 (2015-07-31T23:18:21Z)
+
 * [base] fix CPU hogging
 * [base] fix fragment check, href=#frag can also be anchor
 * [base] adjust URL quoting, only quote when there is `%` in URL
