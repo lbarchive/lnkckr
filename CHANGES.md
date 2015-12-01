@@ -3,6 +3,8 @@ CHANGES
 
 ## Development
 
+* [base] really fix CPU hogging
+
 ## Version 0.3.0 (2015-07-31T23:18:21Z)
 
 * [base] fix CPU hogging

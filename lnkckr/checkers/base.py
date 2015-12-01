@@ -436,6 +436,7 @@ class Checker():
             item = None
           except Full:
             count += 1 if self.check_update_links(r) else 0
+          time.sleep(0.001)
         count += 1 if self.check_update_links(r) else 0
         if count % self.SAVE_INT == 0:
           self.do_save()
