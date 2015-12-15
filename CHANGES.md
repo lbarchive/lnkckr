@@ -4,6 +4,7 @@ CHANGES
 ## Development
 
 * [base] really fix CPU hogging
+* [base] add option `-U` (`--unverified-certificates`) for not verifying certifcates
 
 ## Version 0.3.0 (2015-07-31T23:18:21Z)
 

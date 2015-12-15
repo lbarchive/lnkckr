@@ -24,6 +24,7 @@ from __future__ import print_function
 import json
 import re
 import socket
+import ssl
 import time
 import traceback
 from itertools import groupby, product
@@ -65,8 +66,8 @@ class Checker():
     self.links = {}
     self.json_filename = None
 
-    self.exclude_status = (cfg['exclude_status'] if 'exclude_status' in cfg
-                           else (None, 200))
+    self.exclude_status = cfg.get('exclude_status', (None, 200))
+    self.unverified_certificates = cfg.get('unverified_certificates', False)
 
     # User-Agent for some website like Wikipedia. Without it, most of requests
     # result in 403.
@@ -285,7 +286,11 @@ class Checker():
       if url_comp.scheme == 'http':
         conn = HTTPConnection(url_comp.netloc)
       elif url_comp.scheme == 'https':
-        conn = HTTPSConnection(url_comp.netloc)
+        if self.unverified_certificates:
+          context = ssl._create_unverified_context()
+        else:
+          context = ssl.create_default_context()
+        conn = HTTPSConnection(url_comp.netloc, context=context)
       else:
         if not url and frags and local_html:
           pairs = product(frags, (local_html,))

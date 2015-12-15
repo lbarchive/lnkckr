@@ -44,6 +44,8 @@ def main():
                       default='unchecked,200',
                       help=('Exclude links with checking status from listing '
                             'in report section. (Default: %(default)s)'))
+  parser.add_argument('-U', '--unverified-certificates', action='store_true',
+                      help='do not verify certificates')
   parser.add_argument('--version', action='version',
                       version='%(prog)s ' + __version__)
   args = parser.parse_args()
@@ -64,7 +66,8 @@ def main():
   exclude_status = args.exclude_status.split(',')
   exclude_status = tuple(map(f, exclude_status))
   cfg = {
-    'exclude_status': exclude_status
+    'exclude_status': exclude_status,
+    'unverified_certificates': args.unverified_certificates,
   }
   checker = Checker(**cfg)
   checker.load(args.file, args.json, args.update)
