@@ -96,6 +96,7 @@ class Checker(BaseChecker):
     self.print_report()
     self.print_summary()
     self.print_toplist()
+    self.print_time()
 
   # report
   #########

@@ -66,6 +66,9 @@ class Checker():
     self.links = {}
     self.json_filename = None
 
+    self.started = None
+    self.ended = None
+
     self.exclude_status = cfg.get('exclude_status', (None, 200))
     self.unverified_certificates = cfg.get('unverified_certificates', False)
 
@@ -412,6 +415,7 @@ class Checker():
     f is a function for passing to filter function to filter links with
     argument (url, link).
     """
+    self.started = time.time()
     default_timeout = socket.getdefaulttimeout()
     q = Queue(self.QUEUE_SIZE)
     r = Queue(self.QUEUE_SIZE)
@@ -459,6 +463,7 @@ class Checker():
     self.check_update_links(r)
     self.do_save()
     socket.setdefaulttimeout(default_timeout)
+    self.ended = time.time()
 
   def do_update(self, url, link):
     """Call by update_links when a link is updated"""
@@ -513,6 +518,7 @@ class Checker():
 
     self.print_report()
     self.print_summary()
+    self.print_time()
 
   # report
   #########
@@ -578,3 +584,22 @@ class Checker():
     print()
     print('TOTAL {:,} links'.format(len(self.links)))
     print()
+
+  # time
+  ######
+
+  def print_time(self):
+
+    self.print_heading('time')
+
+    d = self.ended - self.started
+    fmt = '%-7s: %%Y-%%m-%%d %%H:%%M:%%S'
+    print(time.strftime(fmt % 'Started', time.localtime(self.started)))
+    print(time.strftime(fmt % 'Ended', time.localtime(self.ended)))
+
+    if d >= 60:
+      m = d // 60
+      d -= m * 60
+      print('Elapsed: %d minutes %d seconds' % (m, d))
+    else:
+      print('Elapsed: %d seconds' % d)
