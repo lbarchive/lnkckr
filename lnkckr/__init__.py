@@ -1,4 +1,4 @@
-# Copyright (C) 2013, 2015 by Yu-Jie Lin
+# Copyright (C) 2013, 2015, 2016 by Yu-Jie Lin
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -21,9 +21,9 @@
 
 __library__ = 'lnkckr'
 __description__ = 'Link checking library'
-__copyright__ = 'Copyright 2013, 2015, Yu Jie Lin'
+__copyright__ = 'Copyright 2013, 2015, 2016, Yu Jie Lin'
 __license__ = 'MIT'
-__version__ = '0.3.0'
+__version__ = '0.4.0'
 __website__ = 'http://bitbucket.org/livibetter/lnkckr'
 
 __author__ = 'Yu-Jie Lin'

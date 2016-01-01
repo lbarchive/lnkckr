@@ -3,6 +3,8 @@ CHANGES
 
 ## Development
 
+## Version 0.4.0 (2016-01-01T00:45:35Z)
+
 * [base] really fix CPU hogging
 * [base] add option `-U` (`--unverified-certificates`) for not verifying certifcates
 * [base] output starte, ended, and elapsed times
